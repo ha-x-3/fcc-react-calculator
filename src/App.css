@@ -73,3 +73,44 @@ button {
 .operator {
   background-color: rgb(87, 137, 87);
 }
+
+@media (max-width: 767px) {
+  #app {
+    height: 100%;
+    width: 100%;
+    padding: 50px 0;
+  }
+
+  h1 {
+    font-size: 2.5em;
+    height: auto;
+    margin-bottom: 50px;
+  }
+
+  #calculator {
+    height: auto;
+    width: 80%;
+    margin: auto;
+  }
+
+  #display {
+    height: 15vh;
+    font-size: 1.5em;
+  }
+
+}
+
+/* Styles for screens between 768px and 1024px (tablets) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  #calculator {
+    width: 50vw;
+  }
+
+  #display {
+    font-size: 1.8em;
+  }
+
+  button {
+    font-size: 1.8em;
+  }
+}
