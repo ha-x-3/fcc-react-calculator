@@ -4,71 +4,67 @@ import './App.css';
 
 function App() {
 	const [formula, setFormula] = useState('');
-	const [input, setInput] = useState('');
+	const [input, setInput] = useState('0');
 	const [result, setResult] = useState('');
 
-const handleButtonClick = (value) => {
-	switch (value) {
-		case 'AC':
-			setFormula('');
-			setInput('');
-			setResult('');
-			break;
-		case '=':
-			try {
-				const evaluatedResult = math.evaluate(formula + input);
-				setResult(evaluatedResult.toString());
-				setFormula((prev) => prev + input + '=');
-				setInput('');
-			} catch (error) {
-				setResult('Error');
-				setFormula('');
-				setInput('');
-			}
-			break;
-		case '+':
-		case '-':
-		case '*':
-		case '/':
-			if (input === '' && formula === '') return; // Do nothing if both input and formula are empty
-			if (input === '') {
-				// Replace the last operator if input is empty
-				setFormula((prev) => prev.slice(0, -1) + value);
-			} else {
-				setFormula((prev) => prev + input + value);
-				setInput('');
-			}
-			break;
-		case '.':
-			if (!input.includes('.')) {
-				setInput((prev) => prev + value);
-			}
-			break;
-		default:
-			// Handle numbers
-			if (value === '0' && input === '0') {
-				break;
-			}
-			if (formula.includes('=') || result) {
-				// Reset the formula and result if there was a previous result
-				setFormula('');
-				setResult('');
-				setInput(value);
-			} else {
-				setInput((prev) => (prev === '0' ? value : prev + value));
-			}
-			break;
-	}
-};
-
+  const handleButtonClick = (value) => {
+    switch (value) {
+      case 'AC':
+        setFormula('');
+        setInput('0');
+        setResult('');
+        break;
+      case '=':
+        try {
+          const evaluatedResult = math.evaluate(formula + input);
+          setResult(evaluatedResult.toString());
+          setFormula((prev) => prev + input + '=');
+          setInput('');
+        } catch (error) {
+          setResult('Error');
+          setFormula('');
+          setInput('');
+        }
+        break;
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+        if (input === '' && formula === '') return; // Do nothing if both input and formula are empty
+        if (input === '') {
+          // Replace the last operator if input is empty
+          setFormula((prev) => prev.slice(0, -1) + value);
+        } else {
+          setFormula((prev) => prev + input + value);
+          setInput('');
+        }
+        break;
+      case '.':
+        if (!input.includes('.')) {
+          setInput((prev) => prev + value);
+        }
+        break;
+      default:
+        // Handle numbers
+        if (value === '0' && input === '0') {
+          break;
+        }
+        setInput((prev) => (prev === '0' ? value : prev + value));
+        if (formula.includes('=') || result) {
+          setFormula('');
+          setResult('');
+        }
+        break;
+    }
+  };
 
 	return (
 		<div id='app'>
 			<h1>React Calculator</h1>
 			<div id='calculator'>
-				<div id='display'>
+				<div id='display-div'>
 					<div id='display-line'>{formula}</div>
-					<div id='input-line'>{input || result}</div>
+					<div id='display'>{input || result}</div>
 				</div>
 				<div id='buttons'>
 					<button
