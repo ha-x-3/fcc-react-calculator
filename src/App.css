@@ -35,6 +35,7 @@ h1 {
   font-family: "Changa", sans-serif;
   color: rgb(199, 185, 88);
   overflow: scroll;
+  text-align: right;
 }
 
 #buttons {
@@ -64,6 +65,18 @@ button {
 
 #clear {
   background-color: rgb(189, 81, 81);
+}
+
+#display-line {
+  height: 40%;
+  padding-right: 5px;
+  font-size: 1.2em;
+}
+
+#input-line {
+  height: 50%;
+  font-size: 2.5em;
+  padding-right: 5px;
 }
 
 .jumbo {
