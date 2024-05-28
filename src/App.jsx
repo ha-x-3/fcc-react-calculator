@@ -6,56 +6,92 @@ function App() {
 	const [formula, setFormula] = useState('');
 	const [input, setInput] = useState('0');
 	const [result, setResult] = useState('');
+  const [evaluated, setEvaluated] = useState(false);
 
   const handleButtonClick = (value) => {
-    switch (value) {
-      case 'AC':
-        setFormula('');
-        setInput('0');
-        setResult('');
-        break;
-      case '=':
-        try {
-          const evaluatedResult = math.evaluate(formula + input);
-          setResult(evaluatedResult.toString());
-          setFormula((prev) => prev + input + '=');
-          setInput('');
-        } catch (error) {
-          setResult('Error');
-          setFormula('');
-          setInput('');
-        }
-        break;
-      case '+':
-      case '-':
-      case '*':
-      case '/':
-        if (input === '' && formula === '') return; // Do nothing if both input and formula are empty
-        if (input === '') {
-          // Replace the last operator if input is empty
-          setFormula((prev) => prev.slice(0, -1) + value);
-        } else {
-          setFormula((prev) => prev + input + value);
-          setInput('');
-        }
-        break;
-      case '.':
-        if (!input.includes('.')) {
-          setInput((prev) => prev + value);
-        }
-        break;
-      default:
-        // Handle numbers
-        if (value === '0' && input === '0') {
-          break;
-        }
-        setInput((prev) => (prev === '0' ? value : prev + value));
-        if (formula.includes('=') || result) {
-          setFormula('');
-          setResult('');
-        }
-        break;
-    }
+		if (evaluated && '0123456789.'.includes(value)) {
+			setFormula('');
+			setInput(value === '.' ? '0.' : value);
+			setResult('');
+			setEvaluated(false);
+			return;
+		}
+
+		switch (value) {
+			case 'AC':
+				setFormula('');
+				setInput('0');
+				setResult('');
+				setEvaluated(false);
+				break;
+			case '=':
+				try {
+					const evaluatedResult = math.evaluate(formula + input);
+					setResult(evaluatedResult.toString());
+					setFormula((prev) => prev + input + '=');
+					setInput('');
+					setEvaluated(true);
+				} catch (error) {
+					setResult('Error');
+					setFormula('');
+					setInput('');
+				}
+				break;
+			case '+':
+			case '*':
+			case '/':
+				if (evaluated) {
+					setFormula(result + value);
+					setInput('');
+					setResult('');
+					setEvaluated(false);
+				} else {
+					const lastChar = formula.slice(-1);
+					if (input === '' && '+-*/'.includes(lastChar)) {
+						setFormula((prev) => prev.slice(0, -1) + value);
+					} else {
+						setFormula((prev) => prev + input + value);
+						setInput('');
+					}
+				}
+				break;
+			case '-':
+				if (evaluated) {
+					setFormula(result + value);
+					setInput('');
+					setResult('');
+					setEvaluated(false);
+				} else {
+					const lastChar = formula.slice(-1);
+					if (input === '' && '+-*/'.includes(lastChar)) {
+						setFormula((prev) => prev.slice(0, -1) + value);
+					} else {
+						setFormula((prev) => prev + input + value);
+						setInput('');
+					}
+				}
+				break;
+			case '.':
+				if (!input.includes('.')) {
+					setInput((prev) => prev + value);
+				}
+				break;
+			default:
+				if (value === '0' && input === '0') {
+					break;
+				}
+				if (input === '0' || evaluated) {
+					setInput(value);
+					setEvaluated(false);
+				} else {
+					setInput((prev) => prev + value);
+				}
+				if (formula.includes('=') || result) {
+					setFormula('');
+					setResult('');
+				}
+				break;
+		}
   };
 
 	return (
