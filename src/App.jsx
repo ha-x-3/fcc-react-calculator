@@ -16,68 +16,67 @@ function App() {
 	};
 
 	const typeNumbers = (e) => {
-		if (currentValue[0] === '0' && e.target.value === '0') {
-			setCurrentValue(currentValue);
+		const value = e.target.value;
+		if (currentValue === '0' && value === '0') return;
+
+		if (isEqualsClicked) {
+			setOutput(value);
+			setCurrentValue(value);
+			setCurrentFormula(value);
+			setIsEqualsClicked(false);
 		} else {
-			if (isEqualsClicked && typeof currentFormula === 'number') {
-				setOutput(e.target.value);
-				setCurrentValue(e.target.value);
-				setCurrentFormula(e.target.value);
-				setIsEqualsClicked(false);
-			} else if (isEqualsClicked && typeof currentFormula === 'string') {
-				setOutput(e.target.value);
-				setCurrentValue(e.target.value);
-				setCurrentFormula(`${currentFormula}${e.target.value}`);
-				setIsEqualsClicked(false);
-			} else {
-				setOutput(`${currentValue}${e.target.value}`);
-				setCurrentValue(`${currentValue}${e.target.value}`);
-				setCurrentFormula(`${currentFormula}${e.target.value}`);
-				setIsEqualsClicked(false);
-			}
+			const newValue =
+				currentValue === '0' ? value : currentValue + value;
+			setOutput(newValue);
+			setCurrentValue(newValue);
+			setCurrentFormula(currentFormula + value);
 		}
 	};
 
 	const handleOperators = (e) => {
-		let lastChar = currentFormula[currentFormula.length - 1];
-		let myRegex = /[+\-*\/]/;
+		const operator = e.target.value;
+		const lastChar = currentFormula[currentFormula.length - 1];
+		const operators = /[+\-*/]/;
 
-		if (!myRegex.test(lastChar)) {
-			setCurrentFormula(`${currentFormula}${e.target.value}`);
+		if (isEqualsClicked) {
+			setCurrentFormula(output + operator);
+			setCurrentValue('');
+			setIsEqualsClicked(false);
+		} else if (!operators.test(lastChar)) {
+			setCurrentFormula(currentFormula + operator);
+			setCurrentValue('');
+		} else if (lastChar !== '-' && operator === '-') {
+			setCurrentFormula(currentFormula + operator);
+		} else if (operator !== '-' && lastChar === '-') {
+			setCurrentFormula(currentFormula.slice(0, -2) + operator);
 			setCurrentValue('');
 		} else {
-			if (lastChar !== '-' && e.target.value === '-') {
-				setCurrentFormula(`${currentFormula}${e.target.value}`);
-			} else if (e.target.value !== '-' && lastChar === '-') {
-				setCurrentFormula(currentFormula.slice(0, -2) + e.target.value);
-				setCurrentValue('');
-			} else {
-				setCurrentFormula(currentFormula.slice(0, -1) + e.target.value);
-			}
+			setCurrentFormula(currentFormula.slice(0, -1) + operator);
 		}
 	};
 
-	const addDecimal = (e) => {
-		let lastChar = currentFormula[currentFormula.length - 1];
-		let myRegex = /[+\-*\/]/;
-
-		if (
-			!currentValue.includes('.') &&
-			!isEqualsClicked &&
-			!myRegex.test(lastChar)
-		) {
-			setOutput(output + '.');
+	const addDecimal = () => {
+		if (!currentValue.includes('.')) {
+			const newValue = currentValue + '.';
+			setOutput(newValue);
 			setCurrentFormula(currentFormula + '.');
-			setCurrentValue(currentValue + '.');
+			setCurrentValue(newValue);
 		}
 	};
 
-	const evaluate = (e) => {
+	const evaluate = () => {
 		if (currentFormula !== '') {
-			let result = math.evaluate(currentFormula);
-			setOutput(result);
-			setCurrentFormula(result);
-			setIsEqualsClicked(true);
+			try {
+				const result = math.evaluate(currentFormula);
+				setOutput(result.toString());
+				setCurrentFormula(currentFormula + '=' + result);
+				setCurrentValue(result.toString());
+				setIsEqualsClicked(true);
+			} catch (error) {
+				setOutput('Error');
+				setCurrentFormula('');
+				setCurrentValue('');
+			}
 		}
 	};
 
